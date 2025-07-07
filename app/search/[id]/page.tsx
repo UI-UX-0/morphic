@@ -4,6 +4,7 @@ import { getCurrentUserId } from '@/lib/auth/get-current-user'
 import { getModels } from '@/lib/config/models'
 import { convertToUIMessages } from '@/lib/utils'
 import { notFound, redirect } from 'next/navigation'
+import { cookies } from 'next/headers'
 import { ExtendedCoreMessage, SearchResults } from '@/lib/types'; // Added SearchResults
 
 export const maxDuration = 60
@@ -12,7 +13,8 @@ export async function generateMetadata(props: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = await props.params;
-  const userId = await getCurrentUserId();
+  const cookieStore = await cookies();
+  const userId = await getCurrentUserId(cookieStore);
   const chat = await getChat(id, userId || 'anonymous'); // Ensure fallback for userId
 
   let metadata: { title: string; openGraph?: { images?: { url: string; width?: number; height?: number }[] } } = {
@@ -54,7 +56,8 @@ export async function generateMetadata(props: {
 export default async function SearchPage(props: {
   params: Promise<{ id: string }>
 }) {
-  const userId = await getCurrentUserId()
+  const cookieStore = await cookies()
+  const userId = await getCurrentUserId(cookieStore)
   const { id } = await props.params
 
   const chat = await getChat(id, userId)

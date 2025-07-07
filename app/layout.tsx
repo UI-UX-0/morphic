@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { Inter as FontSans } from 'next/font/google'
+import { cookies } from 'next/headers'
 import './globals.css'
 
 const fontSans = FontSans({
@@ -53,7 +54,8 @@ export default async function RootLayout({
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   if (supabaseUrl && supabaseAnonKey) {
-    const supabase = await createClient()
+    const cookieStore = await cookies()
+    const supabase = await createClient(cookieStore)
     const {
       data: { user: supabaseUser }
     } = await supabase.auth.getUser()

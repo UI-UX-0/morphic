@@ -2,6 +2,7 @@ import { getChatsPage } from '@/lib/actions/chat'
 import { getCurrentUserId } from '@/lib/auth/get-current-user'
 import { type Chat } from '@/lib/types'
 import { NextRequest, NextResponse } from 'next/server'
+import { cookies } from 'next/headers'
 
 interface ChatPageResponse {
   chats: Chat[]
@@ -18,7 +19,8 @@ export async function GET(request: NextRequest) {
   const offset = parseInt(searchParams.get('offset') || '0', 10)
   const limit = parseInt(searchParams.get('limit') || '20', 10)
 
-  const userId = await getCurrentUserId()
+  const cookieStore = await cookies()
+  const userId = await getCurrentUserId(cookieStore)
 
   try {
     const result = await getChatsPage(userId, limit, offset)

@@ -21,7 +21,9 @@ export async function POST(req: Request) {
     const { messages, id: chatId } = await req.json()
     const referer = req.headers.get('referer')
     const isSharePage = referer?.includes('/share/')
-    const userId = await getCurrentUserId()
+    
+    const cookieStore = await cookies()
+    const userId = await getCurrentUserId(cookieStore)
 
     if (isSharePage) {
       return new Response('Chat API is not available on share pages', {
@@ -30,7 +32,6 @@ export async function POST(req: Request) {
       })
     }
 
-    const cookieStore = await cookies()
     const modelJson = cookieStore.get('selectedModel')?.value
     const searchMode = cookieStore.get('search-mode')?.value === 'true'
 
